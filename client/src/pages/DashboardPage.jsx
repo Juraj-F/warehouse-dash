@@ -7,32 +7,29 @@ import { useEffect } from "react";
 export default function DashboardPage() {
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading , setIsLOading] = useState(false)
+  const [isError, setIsError] =  useState('')
 
   const {tasks,loading, error} = useTasks()
 
-  console.log("tasks in fe",tasks)
-  console.log("loading in fe",loading)
-  console.log("error in fe",error)
-
   useEffect(()=>{
     setIsLOading(loading)
+    if(error.length > 0) setIsError(error)
   },[loading])
 
 
   const handleFormOpen =() =>{
     setIsOpen(true)
   }
-1
 
   const handleFormClose =() =>{
     setIsOpen(false)
   }
 
-  const mockTasks = [
-    { id: 1, title: 'Move pallet A-102', status: 'Open', priority: 'High', zone: 'Receiving' },
-    { id: 2, title: 'Inventory check', status: 'In Progress', priority: 'Medium', zone: 'Zone B' },
-    { id: 3, title: 'Charge robot 14', status: 'Completed', priority: 'Low', zone: 'Charging' },
-  ];
+  // const mockTasks = [
+  //   { id: 1, title: 'Move pallet A-102', status: 'Open', priority: 'High', zone: 'Receiving' },
+  //   { id: 2, title: 'Inventory check', status: 'In Progress', priority: 'Medium', zone: 'Zone B' },
+  //   { id: 3, title: 'Charge robot 14', status: 'Completed', priority: 'Low', zone: 'Charging' },
+  // ];
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -109,7 +106,16 @@ export default function DashboardPage() {
             </thead>
 
             <tbody className="divide-y">
-              {isLoading?  (<h2 className="text-2xl font-semibold text-gray-900">Loading data please wait</h2>) 
+              {isError && (<tr className="text-2xl font-semibold text-gray-900">
+                <td>
+                {error}
+                </td>
+                </tr>)}
+              {isLoading?  (<tr className="text-2xl font-semibold text-gray-900">
+                <td>
+                Loading data please wait
+                </td>
+                </tr>) 
               : 
               (
               tasks.map((task) => (

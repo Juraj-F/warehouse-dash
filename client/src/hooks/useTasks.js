@@ -15,7 +15,7 @@ useEffect(()=>{
     setError('')
     try{
       const data = await getTasks();
-      console.log('result from usetasks',data)
+
       setTasks(data.result || data)
       
     }catch(err){
@@ -23,14 +23,13 @@ useEffect(()=>{
       setError(err)
     } finally{
       setLoading(false)
-      setError("No errors")
+      setError("")
     }
   };
 
   loadTasks()
 },[])
 
-console.log('tasks in usetasks',tasks)
 
   return { tasks, loading, error };
 }
