@@ -15,6 +15,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      console.log('form data', form)
       const data = await login(form);
       saveAuth(data);
       navigate('/dashboard');

@@ -3,7 +3,7 @@ import AppLayout from '../layouts/AppLayout.jsx';
 import LoginPage from '../pages/LoginPage.jsx';
 import DashboardPage from '../pages/DashboardPage.jsx';
 import TasksPage from '../pages/TasksPage.jsx';
-import TaskFormPage from '../pages/TaskFormPage.jsx';
+import TaskForm from '../pages/TaskForm.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 
@@ -16,8 +16,8 @@ export default function AppRoutes() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/tasks" element={<TasksPage />} />
-          <Route path="/tasks/new" element={<TaskFormPage />} />
-          <Route path="/tasks/:id/edit" element={<TaskFormPage />} />
+          <Route path="/tasks/new" element={<TaskForm />} />
+          <Route path="/tasks/:id/edit" element={<TaskForm />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
