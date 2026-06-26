@@ -1,20 +1,34 @@
 import TaskForm from "./TaskForm";
 import { useState } from "react";
 import Modal from "../components/Modal";
+import { useTasks } from "../hooks/useTasks";
+import { useEffect } from "react";
 
 export default function DashboardPage() {
-
   const [isOpen, setIsOpen] = useState(false)
+  const [isLoading , setIsLOading] = useState(false)
+
+  const {tasks,loading, error} = useTasks()
+
+  console.log("tasks in fe",tasks)
+  console.log("loading in fe",loading)
+  console.log("error in fe",error)
+
+  useEffect(()=>{
+    setIsLOading(loading)
+  },[loading])
+
 
   const handleFormOpen =() =>{
     setIsOpen(true)
   }
+1
 
   const handleFormClose =() =>{
     setIsOpen(false)
   }
 
-  const tasks = [
+  const mockTasks = [
     { id: 1, title: 'Move pallet A-102', status: 'Open', priority: 'High', zone: 'Receiving' },
     { id: 2, title: 'Inventory check', status: 'In Progress', priority: 'Medium', zone: 'Zone B' },
     { id: 3, title: 'Charge robot 14', status: 'Completed', priority: 'Low', zone: 'Charging' },
@@ -95,7 +109,10 @@ export default function DashboardPage() {
             </thead>
 
             <tbody className="divide-y">
-              {tasks.map((task) => (
+              {isLoading?  (<h2 className="text-2xl font-semibold text-gray-900">Loading data please wait</h2>) 
+              : 
+              (
+              tasks.map((task) => (
                 <tr key={task.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3 font-medium text-gray-900">
                     {task.title}
@@ -116,7 +133,9 @@ export default function DashboardPage() {
                     </button>
                   </td>
                 </tr>
-              ))}
+              ))) 
+              }
+
             </tbody>
           </table>
 

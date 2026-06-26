@@ -2,6 +2,7 @@ import httpClient from './httpClient.js';
 
 export async function getTasks(params) {
   const response = await httpClient.get('/tasks', { params });
+  console.log("response in api helper",response)
   return response.data;
 }
 

@@ -1,6 +1,10 @@
+import { listTasksService } from "../services/taskService.js";
+
 export async function listTasksController(req, res, next) {
+  console.log("list tasks activated")
   try {
-    res.json({ data: [], page: 1, total: 0 });
+        const result = await listTasksService();
+        res.json({ result });
   } catch (error) {
     next(error);
   }
