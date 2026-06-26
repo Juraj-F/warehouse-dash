@@ -1,0 +1,21 @@
+{
+  "name": "warehouse-dashboard-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "latest",
+    "cors": "latest",
+    "dotenv": "^17.4.2",
+    "express": "latest",
+    "jsonwebtoken": "latest",
+    "pg": "latest",
+    "postgres": "^3.4.9",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^6.0.1"
+  }
+}
