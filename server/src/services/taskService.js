@@ -67,9 +67,7 @@ export async function deleteTaskService(id) {
    RETURNING *
    `, [id]);
 
-  console.log("result of update in service", result)
-
-  if(result.rows.length === 0) {throw createHttpError(500, "Updating task failed")}
+  if(result.rows.length === 0) {throw createHttpError(500, "Deleting task failed")}
   
   return result.rows[0];
 }

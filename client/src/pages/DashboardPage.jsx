@@ -25,10 +25,8 @@ export default function DashboardPage() {
     setModal("taskcard")
     try{
           const data = await getTaskId(id)
-
           if(!data) return
           setTaskId(data)
-
 
     } catch (err){ 
       console.error("Requesting task id failed", err)}
@@ -53,11 +51,6 @@ export default function DashboardPage() {
     e.stopPropagation();
     setModal("edit")
     setSelectedTask(task)
-    try{
-          const data = await updateTask(task)
-
-    } catch (err){ 
-      console.error("Requesting task id failed", err)}
   }
 
   return (

@@ -9,11 +9,8 @@ export default function TaskForm({onClose, onTaskCreated, task, mode}) {
     status:'open',
     priority:'low'
   })
-  
-  console.log("mode", mode)
+ 
   const isEdit = mode === "edit";
-  console.log("task data in task form", task)
-
 
   const handleChange = (e)=>{
     const {name, value} = e.target
