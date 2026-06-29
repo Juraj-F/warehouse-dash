@@ -3,18 +3,19 @@ import { requireAuth } from '../middleware/requireAuth.js';
 import {
   createTaskController,
   deleteTaskController,
-  getTaskController,
+  getTaskIdController,
   listTasksController,
   updateTaskController
 } from '../controllers/taskController.js';
+import { authenticate } from '../middleware/authenticate.js';
 
 const router = Router();
 
 router.use(requireAuth);
-router.get('/', listTasksController);
-router.post('/', createTaskController);
-router.get('/:id', getTaskController);
-router.patch('/:id', updateTaskController);
-router.delete('/:id', deleteTaskController);
+router.get('/', authenticate, listTasksController);
+router.post('/',authenticate, createTaskController);
+router.get('/:id', authenticate, getTaskIdController);
+router.patch('/:id',authenticate, updateTaskController);
+router.delete('/:id', authenticate, deleteTaskController);
 
 export default router;

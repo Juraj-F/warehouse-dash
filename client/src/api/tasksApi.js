@@ -6,13 +6,17 @@ export async function getTasks(params) {
   return response.data;
 }
 
-export async function getTask(id) {
+export async function getTaskId(id) {
+  console.log("id in api helper", id)
   const response = await httpClient.get(`/tasks/${id}`);
+  console.log("response in api helper returned from controller", response.data)
   return response.data;
 }
 
-export async function createTask(payload) {
-  const response = await httpClient.post('/tasks', payload);
+export async function createTask(form) {
+  console.log("payload in api helper", form)
+  const response = await httpClient.post('/tasks', form);
+  console.log("response in api helper", response.data)
   return response.data;
 }
 

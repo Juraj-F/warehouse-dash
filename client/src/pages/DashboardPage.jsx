@@ -1,48 +1,40 @@
 import TaskForm from "./TaskForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../components/Modal";
 import { useTasks } from "../hooks/useTasks";
-import { useEffect } from "react";
+import { getTaskId } from "../api/tasksApi";
+import TaskCard from "./TaskCard.jsx";
 
 export default function DashboardPage() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isLoading , setIsLOading] = useState(false)
-  const [isError, setIsError] =  useState('')
+  const [modal,setModal] = useState(null)
+  const [taskId, setTaskId] = useState('')
 
-  const {tasks,loading, error} = useTasks()
-
-  useEffect(()=>{
-    setIsLOading(loading)
-    if(error.length > 0) setIsError(error)
-  },[loading])
+  const {tasks,loading, error, refreshTasks} = useTasks()
 
 
   const handleFormOpen =() =>{
-    setIsOpen(true)
+    setModal("newtask")
   }
 
   const handleFormClose =() =>{
-    setIsOpen(false)
+    setModal(null)
   }
 
-  // const mockTasks = [
-  //   { id: 1, title: 'Move pallet A-102', status: 'Open', priority: 'High', zone: 'Receiving' },
-  //   { id: 2, title: 'Inventory check', status: 'In Progress', priority: 'Medium', zone: 'Zone B' },
-  //   { id: 3, title: 'Charge robot 14', status: 'Completed', priority: 'Low', zone: 'Charging' },
-  // ];
+  const handleOpenItem= async (id)=>{
+    setModal("taskcard")
+    try{
+          const data = await getTaskId(id)
+
+          if(!data) return
+          setTaskId(data)
+          setOpenId(true)
+
+    } catch (err){ 
+      console.error("Requesting task id failed", err)}
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="border-b bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <h1 className="text-xl font-semibold text-gray-900">
-            Warehouse Operations Dashboard
-          </h1>
-          <button className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700">
-            Logout
-          </button>
-        </div>
-      </header>
 
       <main className="mx-auto max-w-7xl px-6 py-6">
         <div className="mb-6 flex items-center justify-between">
@@ -53,15 +45,25 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <button onClick={handleFormOpen} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+          <button 
+          onClick={handleFormOpen} 
+          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
             + New Task
           </button>
 
-          <Modal open={isOpen} onClose={handleFormClose}>
+          <Modal open={modal==="newtask"} onClose={handleFormClose}>
             <TaskForm 
-            onCLose={handleFormClose}
+            onClose={handleFormClose}
+            onTaskCreated={refreshTasks}
             />
           </Modal>
+
+          <Modal open={modal==="taskcard"} onClose={()=>{setTaskId(null);setModal(null)}}>
+            <TaskCard
+            taskId={taskId}
+            />
+          </Modal>
+
         </div>
 
         <section className="mb-6 rounded-xl border bg-white p-4 shadow-sm">
@@ -106,12 +108,12 @@ export default function DashboardPage() {
             </thead>
 
             <tbody className="divide-y">
-              {isError && (<tr className="text-2xl font-semibold text-gray-900">
+              {error.length>0 && (<tr className="text-2xl font-semibold text-gray-900">
                 <td>
                 {error}
                 </td>
                 </tr>)}
-              {isLoading?  (<tr className="text-2xl font-semibold text-gray-900">
+              {loading?  (<tr className="text-2xl font-semibold text-gray-900">
                 <td>
                 Loading data please wait
                 </td>
@@ -119,7 +121,12 @@ export default function DashboardPage() {
               : 
               (
               tasks.map((task) => (
-                <tr key={task.id} className="hover:bg-gray-50">
+                <tr 
+                key={task.id} 
+                id={task.id} 
+                className="hover:bg-gray-50" 
+                onClick={()=>handleOpenItem(task.id)}
+                >
                   <td className="px-4 py-3 font-medium text-gray-900">
                     {task.title}
                   </td>
@@ -131,7 +138,7 @@ export default function DashboardPage() {
                   <td className="px-4 py-3 text-gray-700">{task.priority}</td>
                   <td className="px-4 py-3 text-gray-700">{task.zone}</td>
                   <td className="px-4 py-3 text-right">
-                    <button className="mr-3 text-sm font-medium text-blue-600 hover:underline">
+                    <button onClick={(e)=>{e.stopPropagation(); setTaskId(task.id); setModal("edit")}} className="mr-3 text-sm font-medium text-blue-600 hover:underline">
                       Edit
                     </button>
                     <button className="text-sm font-medium text-red-600 hover:underline">

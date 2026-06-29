@@ -3,6 +3,7 @@ import { createHttpError } from '../utils/createHttpError.js';
 
 export function authenticate(req, res, next) {
   const authHeader = req.headers.authorization;
+  console.log("header request in authenticate", req.headers, req.headers.authorization)
 
   if (!authHeader?.startsWith('Bearer ')) {
     return next(createHttpError(401, 'Missing authorization token'));

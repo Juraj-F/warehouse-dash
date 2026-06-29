@@ -1,4 +1,4 @@
-import { listTasksService } from "../services/taskService.js";
+import { listTasksService, getTaskIdService, createTaskService } from "../services/taskService.js";
 
 export async function listTasksController(req, res, next) {
   console.log("list tasks activated")
@@ -10,17 +10,22 @@ export async function listTasksController(req, res, next) {
   }
 }
 
-export async function getTaskController(req, res, next) {
+export async function getTaskIdController(req, res, next) {
+  const id=req.params.id
   try {
-    res.json({ message: 'TODO: get task by id' });
+    const data=await getTaskIdService({id})
+    res.json({ data });
   } catch (error) {
     next(error);
   }
 }
 
 export async function createTaskController(req, res, next) {
+  console.log("req payload", req.body)
+  const payload = req.body
   try {
-    res.status(201).json({ message: 'TODO: create task' });
+    const data = await createTaskService({payload})
+    res.status(201).json(data);
   } catch (error) {
     next(error);
   }

@@ -1,4 +1,31 @@
-export default function TaskForm({onCLose}) {
+import { createTask } from "../api/tasksApi";
+import { useState } from "react";
+
+export default function TaskForm({onClose, onTaskCreated}) {
+  const [form, setForm] = useState({
+    title:'',
+    description:'',
+    zone:'',
+    status:'open',
+    priority:'low'
+  })
+
+  const handleChange = (e)=>{
+    const {name, value} = e.target
+    setForm((prev)=>({...prev, [name]:value}))
+  }
+
+    const handleSubmit = async (e)=>{
+      e.preventDefault()
+      e.stopPropagation()
+  try {
+      await createTask(form)
+      await onTaskCreated();
+      onClose()
+  } catch (err) { 
+    console.error("Creating task failed", err)}
+ }
+
   return (
     <div className="min-h-full bg-gray-100">
       <main className="mx-auto max-w-3xl px-6 py-8">
@@ -9,12 +36,15 @@ export default function TaskForm({onCLose}) {
           </p>
         </div>
 
-        <form className="rounded-xl border bg-white p-6 shadow-sm">
+        <form className="rounded-xl border bg-white p-6 shadow-sm" onSubmit={handleSubmit}>
           <div className="mb-5">
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Title
             </label>
             <input
+              value={form.title}
+              name="title"
+              onChange={handleChange}
               type="text"
               placeholder="Move pallet A-102"
               className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-blue-500"
@@ -26,6 +56,9 @@ export default function TaskForm({onCLose}) {
               Description
             </label>
             <textarea
+              value={form.description}
+              name="description"
+              onChange={handleChange}
               rows="4"
               placeholder="Describe the task..."
               className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-blue-500"
@@ -37,9 +70,13 @@ export default function TaskForm({onCLose}) {
               <label className="mb-1 block text-sm font-medium text-gray-700">
                 Status
               </label>
-              <select className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-blue-500">
+              <select 
+              className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-blue-500"
+              value={form.status}
+              name="status"
+              onChange={handleChange}>
                 <option>Open</option>
-                <option>In Progress</option>
+                <option>In_progress</option>
                 <option>Completed</option>
                 <option>Blocked</option>
               </select>
@@ -49,7 +86,11 @@ export default function TaskForm({onCLose}) {
               <label className="mb-1 block text-sm font-medium text-gray-700">
                 Priority
               </label>
-              <select className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-blue-500">
+              <select 
+              className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-blue-500"
+              value={form.priority}
+              name="priority"
+              onChange={handleChange}>
                 <option>Low</option>
                 <option>Medium</option>
                 <option>High</option>
@@ -62,6 +103,9 @@ export default function TaskForm({onCLose}) {
               Zone
             </label>
             <input
+              value={form.zone}
+              name="zone"
+              onChange={handleChange}
               type="text"
               placeholder="Receiving, Zone B, Charging..."
               className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-blue-500"
@@ -72,7 +116,7 @@ export default function TaskForm({onCLose}) {
             <button
               type="button"
               className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-gray-50"
-              onClick={onCLose}
+              onClick={onClose}
             >
               Cancel
             </button>

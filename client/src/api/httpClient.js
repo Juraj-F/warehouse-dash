@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getToken } from '../utils/authStorage.js';
+import { clearAuth, getToken } from '../utils/authStorage.js';
 
 const httpClient = axios.create({
   baseURL: 'http://localhost:4000/api'
@@ -12,5 +12,16 @@ httpClient.interceptors.request.use((config) => {
   }
   return config;
 });
+
+
+httpClient.interceptors.response.use(
+  response => response,
+  error=> {
+    if(error.response?.status===401){
+      clearAuth(),
+      window.location.href="/login"
+    }
+  return Promise.reject(error);})
+
 
 export default httpClient;
