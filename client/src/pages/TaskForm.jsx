@@ -1,14 +1,19 @@
-import { createTask } from "../api/tasksApi";
+import { createTask, updateTask } from "../api/tasksApi";
 import { useState } from "react";
 
-export default function TaskForm({onClose, onTaskCreated}) {
-  const [form, setForm] = useState({
+export default function TaskForm({onClose, onTaskCreated, task, mode}) {
+  const [form, setForm] = useState(task || {
     title:'',
     description:'',
     zone:'',
     status:'open',
     priority:'low'
   })
+  
+  console.log("mode", mode)
+  const isEdit = mode === "edit";
+  console.log("task data in task form", task)
+
 
   const handleChange = (e)=>{
     const {name, value} = e.target
@@ -18,9 +23,17 @@ export default function TaskForm({onClose, onTaskCreated}) {
     const handleSubmit = async (e)=>{
       e.preventDefault()
       e.stopPropagation()
-  try {
-      await createTask(form)
-      await onTaskCreated();
+      try {
+      if(isEdit){
+        const id=task.id
+        console.log("form in fe when updating", form)
+        await updateTask(id, form)
+        await onTaskCreated()
+      }else{
+        if(!form) return
+        await createTask(form)
+        await onTaskCreated()
+      }
       onClose()
   } catch (err) { 
     console.error("Creating task failed", err)}
@@ -30,7 +43,7 @@ export default function TaskForm({onClose, onTaskCreated}) {
     <div className="min-h-full bg-gray-100">
       <main className="mx-auto max-w-3xl px-6 py-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-gray-900">Create Task</h1>
+          <h1>{isEdit ? "Edit Task" : "Create Task"}</h1>
           <p className="text-sm text-gray-500">
             Add a new warehouse operation task.
           </p>
@@ -121,12 +134,10 @@ export default function TaskForm({onClose, onTaskCreated}) {
               Cancel
             </button>
 
-            <button
-              type="submit"
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            >
-              Save Task
+            <button type="submit"  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+              {isEdit ? "Update Task" : "Create Task"}
             </button>
+
           </div>
         </form>
       </main>

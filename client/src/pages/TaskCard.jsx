@@ -2,6 +2,7 @@ export default function TaskCard({
   onCLose,
   taskId
 }) {
+  if(!taskId)return null
 
   console.log("taskId in task card", taskId.data)
   const {id, title, description, status, priority, zone, assigned_to, due_date, created_at, updated_at} = taskId.data

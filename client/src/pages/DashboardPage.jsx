@@ -1,13 +1,14 @@
 import TaskForm from "./TaskForm";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "../components/Modal";
 import { useTasks } from "../hooks/useTasks";
-import { getTaskId } from "../api/tasksApi";
+import { deleteTask, getTaskId, updateTask } from "../api/tasksApi";
 import TaskCard from "./TaskCard.jsx";
 
 export default function DashboardPage() {
   const [modal,setModal] = useState(null)
   const [taskId, setTaskId] = useState('')
+  const [selectedTask, setSelectedTask] = useState(null)
 
   const {tasks,loading, error, refreshTasks} = useTasks()
 
@@ -27,7 +28,33 @@ export default function DashboardPage() {
 
           if(!data) return
           setTaskId(data)
-          setOpenId(true)
+
+
+    } catch (err){ 
+      console.error("Requesting task id failed", err)}
+  }
+
+    const handleDelete = async (e, task)=>{
+      console.log("deletion starts")
+    e.stopPropagation();
+    setSelectedTask(task)
+    try{
+      const data = await deleteTask(task.id)
+      
+      console.log("data message", data.message)
+
+      refreshTasks()
+
+    } catch (err){ 
+      console.error("Deleting task id failed", err)}
+  }
+
+  const handleEditItem = async (e, task)=>{
+    e.stopPropagation();
+    setModal("edit")
+    setSelectedTask(task)
+    try{
+          const data = await updateTask(task)
 
     } catch (err){ 
       console.error("Requesting task id failed", err)}
@@ -61,6 +88,19 @@ export default function DashboardPage() {
           <Modal open={modal==="taskcard"} onClose={()=>{setTaskId(null);setModal(null)}}>
             <TaskCard
             taskId={taskId}
+                onClose={() => {
+                setTaskId(null);
+                setModal(null);
+                        }}
+            />
+          </Modal>
+
+          <Modal open={modal==="edit"} onClose={handleFormClose}>
+            <TaskForm 
+            mode={"edit"}
+            onClose={handleFormClose}
+            onTaskCreated={refreshTasks}
+            task={selectedTask}
             />
           </Modal>
 
@@ -138,10 +178,10 @@ export default function DashboardPage() {
                   <td className="px-4 py-3 text-gray-700">{task.priority}</td>
                   <td className="px-4 py-3 text-gray-700">{task.zone}</td>
                   <td className="px-4 py-3 text-right">
-                    <button onClick={(e)=>{e.stopPropagation(); setTaskId(task.id); setModal("edit")}} className="mr-3 text-sm font-medium text-blue-600 hover:underline">
+                    <button onClick={(e)=>handleEditItem(e, task)} className="mr-3 text-sm font-medium text-blue-600 hover:underline">
                       Edit
                     </button>
-                    <button className="text-sm font-medium text-red-600 hover:underline">
+                    <button className="text-sm font-medium text-red-600 hover:underline" onClick={(e)=>handleDelete(e,task)}>
                       Delete
                     </button>
                   </td>
